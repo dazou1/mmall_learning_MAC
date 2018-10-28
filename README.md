@@ -1,1 +1,1 @@
-mmall_learning_mac
+mmall_learning from mac
