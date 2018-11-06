@@ -18,7 +18,7 @@
     update_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from mmall_pay_info
     where id = #{id,jdbcType=INTEGER}
@@ -120,12 +120,12 @@
   <update id="updateByPrimaryKey" parameterType="com.mmall.pojo.PayInfo" >
     update mmall_pay_info
     set user_id = #{userId,jdbcType=INTEGER},
-      order_no = #{orderNo,jdbcType=BIGINT},
-      pay_platform = #{payPlatform,jdbcType=INTEGER},
-      platform_number = #{platformNumber,jdbcType=VARCHAR},
-      platform_status = #{platformStatus,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = now()
+    order_no = #{orderNo,jdbcType=BIGINT},
+    pay_platform = #{payPlatform,jdbcType=INTEGER},
+    platform_number = #{platformNumber,jdbcType=VARCHAR},
+    platform_status = #{platformStatus,jdbcType=VARCHAR},
+    create_time = #{createTime,jdbcType=TIMESTAMP},
+    update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>
