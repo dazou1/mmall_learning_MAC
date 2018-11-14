@@ -19,12 +19,17 @@ import javax.servlet.http.HttpSession;
  * @Date: Create in 下午3:48 18/11/6
  */
 
+//这两个注解必须配套使用
+//这个注解必须要加,使用Controller标识它是一个Handler处理器
 @Controller
+//注解映射器,对URL和Handler的方法进行映射
+//窄化请求映射:为了对URL进行分类管理,可以在类前面定义根路径,最终访问URL是根路径+子路径
 @RequestMapping("/user/")
+//映射成功后,SpringMVC框架生成一个Handler对象,对象中只包含一个映射成功的method
 public class UserController {
 
 
-    //注入IUserService,iUserService名字要与Service注解中设置的名字一致,这样就可以将service注入了
+    //注入IUserService,iUserService名字要与Service注解中设置的名字一致,这样就可以将service注入了,然后Controller层可以调用service层方法
     @Autowired
     private IUserService iUserService;
 
@@ -32,9 +37,11 @@ public class UserController {
     /*
     * 用户登录
     * */
+    //@RequestMapping实现login方法和URL进行映射,一个方法对应一个URL---->子路径;  限制HTTP请求方法为POST
     @RequestMapping(value = "login.do", method = RequestMethod.POST)
-    //返回的时候自动通过Spring MVC的Jackson插件,让返回值序列化为Jackson
+    //返回的时候自动通过SpringMVC的Jackson插件,让返回值序列化为Jackson
     @ResponseBody
+    //通过@RequestParam对简单类型参数进行绑定,如果不使用这个注解,要求request传入参数名称和Controller方法的形参一致,方可绑定成功
     public ServiceResponse<User> login(String username, String password, HttpSession session) {
         //service--->mybatis--->dao
 

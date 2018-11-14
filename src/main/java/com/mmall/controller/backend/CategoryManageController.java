@@ -1,0 +1,106 @@
+package com.mmall.controller.backend;
+
+import com.mmall.common.Const;
+import com.mmall.common.ResponseCode;
+import com.mmall.common.ServiceResponse;
+import com.mmall.pojo.User;
+import com.mmall.service.ICategoryService;
+import com.mmall.service.IUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpSession;
+
+/**
+ * @Author: dazou
+ * @Description: 后台_品类接口
+ * @Date: Create in 上午10:44 18/11/13
+ */
+
+@Controller
+@RequestMapping("/manage/category")
+public class CategoryManageController {
+
+    @Autowired
+    private IUserService iUserService;
+
+    @Autowired
+    private ICategoryService iCategoryService;
+
+
+    //添加品类
+    @RequestMapping("add_category.do")
+    @ResponseBody
+    public ServiceResponse addCategory(HttpSession session, String categoryName,@RequestParam(value = "parentId", defaultValue = "0") int parentId) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), "用户未登录,请登录");
+        }
+        //校验一下是否是管理员
+        if (iUserService.checkAdminRole(user).isSuccess()) {
+            //是管理员
+            //增加我们处理分类的逻辑
+            return iCategoryService.addCategory(categoryName, parentId);
+        } else {
+            return ServiceResponse.createByErrorMessage("无权限操作,需要管理员权限");
+        }
+    }
+
+    //更新品类名
+    @RequestMapping("set_category_name.do")
+    @ResponseBody
+    public ServiceResponse setCategoryName(HttpSession session, Integer categoryId, String categoryName) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), "用户未登录,请登录");
+        }
+        //校验一下是否是管理员
+        if (iUserService.checkAdminRole(user).isSuccess()) {
+            //是管理员
+            //更新categoryName
+            return iCategoryService.updateCategoryName(categoryId, categoryName);
+        } else {
+            return ServiceResponse.createByErrorMessage("无权限操作,需要管理员权限");
+        }
+    }
+
+    //根据所传入的categoryId,获取当前categoryId下边子节点的category信息,并且是平级的,并且不递归
+    @RequestMapping("get_category.do")
+    @ResponseBody
+    public ServiceResponse getChildrenParallelCategory(HttpSession session,@RequestParam(value = "categoryId", defaultValue = "0") Integer categoryId) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), "用户未登录,请登录");
+        }
+        //校验一下是否是管理员
+        if (iUserService.checkAdminRole(user).isSuccess()) {
+            //是管理员
+            //查询子节点的category信息,并且不递归,保持平级
+            return iCategoryService.getChildrenParallelCategory(categoryId);
+        } else {
+            return ServiceResponse.createByErrorMessage("无权限操作,需要管理员权限");
+        }
+    }
+
+    //根据所传入的categoryId,获取当前categoryId下边子节点的category信息,并且递归其子节点下的Id
+    @RequestMapping("get_deep_category.do")
+    @ResponseBody
+    public ServiceResponse getChildrenAndDeepChildrenCategory(HttpSession session,@RequestParam(value = "categoryId", defaultValue = "0") Integer categoryId) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), "用户未登录,请登录");
+        }
+        //校验一下是否是管理员
+        if (iUserService.checkAdminRole(user).isSuccess()) {
+            //是管理员
+            //查询当前节点的Id和递归子节点的Id
+            //0--->10000---->100000
+            return iCategoryService.selectCategoryAndChildrenById(categoryId);
+        } else {
+            return ServiceResponse.createByErrorMessage("无权限操作,需要管理员权限");
+        }
+    }
+}

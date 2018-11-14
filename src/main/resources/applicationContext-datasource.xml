@@ -24,6 +24,8 @@
     </bean>
 
 
+    <!-- spring的xml配置文件加载不到properties属性问题:Facts里去除spring然后再重新+一下就好了 -->
+    <!-- 配置数据源，使用dbcp -->
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="${db.driverClassName}"/>
         <property name="url" value="${db.url}"/>
@@ -57,10 +59,12 @@
         <property name="validationQuery" value="SELECT 1 FROM dual"/>
     </bean>
 
+    <!-- sqlSessionFactory的配置 -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="dataSource"/>
-        <property name="mapperLocations" value="classpath*:mappers/*Mapper.xml"></property>
-
+    <!-- 加载数据源 -->
+    <property name="dataSource" ref="dataSource"/>
+    <!-- 加载全部配置文件xml -->
+    <property name="mapperLocations" value="classpath*:mappers/*Mapper.xml"></property>
         <!-- 分页插件 -->
         <property name="plugins">
             <array>
@@ -76,14 +80,22 @@
 
     </bean>
 
+    <!--  mapper批量扫描，从mapper包中扫描出mapper接口，自动创建代理对象并且在spring容器中注册
+    遵循规范：将mapper.java和mapper.xml映射文件名称保持一致，且在一个目录中
+    自动扫描出来的mapper的bean的id为mapper类名（首字母小写）
+     -->
     <bean name="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- 指定扫描的包名 ，如果扫描多个包，每个包中间使用半角逗号分隔-->
         <property name="basePackage" value="com.mmall.dao"/>
     </bean>
 
     <!-- 使用@Transactional进行声明式事务管理需要声明下面这行 -->
     <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
-    <!-- 事务管理 -->
+    <!-- 事务管理器
+     对mybatis操作数据库事务控制,Spring使用jdbc事务控制类
+     -->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!-- 数据源, 对数据库进行操作都需要引用数据源才能进行数据库操作 -->
         <property name="dataSource" ref="dataSource"/>
         <property name="rollbackOnCommitFailure" value="true"/>
     </bean>

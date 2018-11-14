@@ -21,6 +21,7 @@ import java.util.UUID;
 @Service("iUserService")
 public class UserServiceImpl implements IUserService {
 
+    //注入dao层userMapper,通过Spring管理service,service可以调用dao层接口函数
     @Autowired
     private UserMapper userMapper;
 
@@ -193,4 +194,20 @@ public class UserServiceImpl implements IUserService {
         user.setPassword(StringUtils.EMPTY);
         return ServiceResponse.createBySuccess(user);
     }
+
+
+
+
+    //backend
+    //校验用户是否是管理员
+    public ServiceResponse checkAdminRole(User user) {
+        if (user != null && user.getRole() == Const.Role.ROLE_ADMIN) {
+            return ServiceResponse.createBySuccess();
+        }
+        return ServiceResponse.createByError();
+    }
+
+
+
+
 }

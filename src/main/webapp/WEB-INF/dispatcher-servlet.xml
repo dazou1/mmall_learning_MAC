@@ -8,8 +8,19 @@
 	http://www.springframework.org/schema/mvc
 	http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
+    <!--
+    组件扫描,这样就可以不用一个一个配置Handler（Controller）的bean
+    可以扫描controller,service。。。
+    这里制定扫描的包是com.mmall,并且打开注解
+    -->
+    <!-- 对标记@Controller类中标识有@ResultMapping， @ResultMapping标识映射的URL,-->
     <context:component-scan base-package="com.mmall" annotation-config="true"/>
 
+    <!-- 使用<mvc:annotation-driven>可以代替配置注解映射器和注解适配器的配置
+     <mvc:annotation-driven>默认加载很多的参数绑定方法,
+     比如json转换解析器就默认加载了,如果使用<mvc:annotation-driven>就不用单独配置注解映射器和注解适配器
+     实际开发中就是使用<mvc:annotation-driven>
+     -->
     <mvc:annotation-driven>
         <mvc:message-converters>
             <bean class="org.springframework.http.converter.StringHttpMessageConverter">
