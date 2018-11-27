@@ -31,7 +31,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/manage/product")
-public class ProductManageController {
+public class productManageController {
 
     @Autowired
     IUserService iUserService;
@@ -198,3 +198,4 @@ public class ProductManageController {
         }
     }
 }
+
