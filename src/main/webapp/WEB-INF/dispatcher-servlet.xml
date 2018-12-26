@@ -20,6 +20,7 @@
      <mvc:annotation-driven>默认加载很多的参数绑定方法,
      比如json转换解析器就默认加载了,如果使用<mvc:annotation-driven>就不用单独配置注解映射器和注解适配器
      实际开发中就是使用<mvc:annotation-driven>
+     启用注解驱动的Spring MVC
      -->
     <mvc:annotation-driven>
         <mvc:message-converters>

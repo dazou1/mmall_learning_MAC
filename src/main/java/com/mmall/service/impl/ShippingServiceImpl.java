@@ -22,7 +22,7 @@ import java.util.Map;
 public class ShippingServiceImpl implements IShippingService{
 
     @Autowired
-    ShippingMapper shippingMapper;
+    private ShippingMapper shippingMapper;
 
     public ServiceResponse add(Integer userId, Shipping shipping) {
         shipping.setUserId(userId);

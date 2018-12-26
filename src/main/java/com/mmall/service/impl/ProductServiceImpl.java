@@ -33,13 +33,13 @@ import java.util.List;
 public class ProductServiceImpl implements IProductService {
 
     @Autowired
-    ProductMapper productMapper;
+    private ProductMapper productMapper;
 
     @Autowired
-    CategoryMapper categoryMapper;
+    private CategoryMapper categoryMapper;
 
     @Autowired
-    ICategoryService iCategoryService;
+    private ICategoryService iCategoryService;
 
     //保存或更新产品
     public ServiceResponse saveOrUpdateProduct(Product product) {

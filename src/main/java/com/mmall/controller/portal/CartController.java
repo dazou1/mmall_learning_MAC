@@ -23,7 +23,7 @@ import javax.servlet.http.HttpSession;
 public class CartController {
 
     @Autowired
-    ICartService iCartService;
+    private ICartService iCartService;
 
     //购物车List列表
     @RequestMapping("list.do")

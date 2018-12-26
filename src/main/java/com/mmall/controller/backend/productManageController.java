@@ -34,13 +34,13 @@ import java.util.Map;
 public class productManageController {
 
     @Autowired
-    IUserService iUserService;
+    private IUserService iUserService;
 
     @Autowired
-    IProductService iProductService;
+    private IProductService iProductService;
 
     @Autowired
-    IFileService iFileService;
+    private IFileService iFileService;
 
     //商品保存,增加或更新商品
     @RequestMapping("save.do")

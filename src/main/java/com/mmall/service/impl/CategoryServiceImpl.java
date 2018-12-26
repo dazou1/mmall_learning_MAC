@@ -6,6 +6,7 @@ import com.mmall.common.ServiceResponse;
 import com.mmall.dao.CategoryMapper;
 import com.mmall.pojo.Category;
 import com.mmall.service.ICategoryService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -23,10 +24,12 @@ import java.util.Set;
  */
 
 @Service("iCategoryService")
+@Slf4j
 public class CategoryServiceImpl implements ICategoryService {
 
     //定义日志
-    private Logger logger = LoggerFactory.getLogger(CategoryServiceImpl.class);
+    //使用lombok定义logger
+//    private Logger logger = LoggerFactory.getLogger(CategoryServiceImpl.class);
 
     @Autowired
     private CategoryMapper categoryMapper;
@@ -66,7 +69,7 @@ public class CategoryServiceImpl implements ICategoryService {
         List<Category> categoryList = categoryMapper.selectCategoryChildrenByParentId(categoryId);
         if (CollectionUtils.isEmpty(categoryList)) {
             //集合为空的时候,并不需要向前端输出错误信息,只需要在日志中打印信息即可
-            logger.info("未找到当前分类的子分类");
+            log.info("未找到当前分类的子分类");
         }
         return ServiceResponse.createBySuccess(categoryList);
     }

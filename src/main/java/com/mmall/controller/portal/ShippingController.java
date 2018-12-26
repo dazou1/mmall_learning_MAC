@@ -27,7 +27,7 @@ import javax.servlet.http.HttpSession;
 public class ShippingController {
 
     @Autowired
-    IShippingService iShippingService;
+    private IShippingService iShippingService;
 
     @RequestMapping("add.do")
     @ResponseBody
