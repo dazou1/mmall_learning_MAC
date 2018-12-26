@@ -5,6 +5,7 @@ import com.mmall.common.ResponseCode;
 import com.mmall.common.ServiceResponse;
 import com.mmall.pojo.User;
 import com.mmall.service.IUserService;
+import com.mmall.util.CookieUtil;
 import com.mmall.util.JsonUtil;
 import com.mmall.util.RedisPoolUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -44,16 +47,17 @@ public class UserController {
     //返回的时候自动通过SpringMVC的Jackson插件,让返回值序列化为Jackson
     @ResponseBody
     //通过@RequestParam对简单类型参数进行绑定,如果不使用这个注解,要求request传入参数名称和Controller方法的形参一致,方可绑定成功
-    public ServiceResponse<User> login(String username, String password, HttpSession session) {
+    public ServiceResponse<User> login(String username, String password, HttpSession session, HttpServletResponse httpServletResponse, HttpServletRequest httpServletRequest) {
         //service--->mybatis--->dao
 
         ServiceResponse<User> response = iUserService.login(username, password);
         //登录成功后,在session中加入该用户
         if (response.isSuccess()) {
 //            session.setAttribute(Const.CURRENT_USER, response.getData());
-            //DFCA3E0AE62E214324D502757F884F82
-            //DFCA3E0AE62E214324D502757F884F82
-            //DFCA3E0AE62E214324D502757F884F82
+
+            CookieUtil.writeLoginToken(httpServletResponse, session.getId());
+            CookieUtil.readLoginToken(httpServletRequest);
+            CookieUtil.delLoginToken(httpServletRequest, httpServletResponse);
             RedisPoolUtil.setEx(session.getId(), Const.RedisCacheExtime.REDIS_SESSION_EXTIME, JsonUtil.obj2String(response.getData()));
         }
         return response;
