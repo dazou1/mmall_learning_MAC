@@ -54,10 +54,7 @@ public class UserController {
         //登录成功后,在session中加入该用户
         if (response.isSuccess()) {
 //            session.setAttribute(Const.CURRENT_USER, response.getData());
-
             CookieUtil.writeLoginToken(httpServletResponse, session.getId());
-            CookieUtil.readLoginToken(httpServletRequest);
-            CookieUtil.delLoginToken(httpServletRequest, httpServletResponse);
             RedisPoolUtil.setEx(session.getId(), Const.RedisCacheExtime.REDIS_SESSION_EXTIME, JsonUtil.obj2String(response.getData()));
         }
         return response;
