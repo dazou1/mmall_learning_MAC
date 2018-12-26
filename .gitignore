@@ -10,6 +10,10 @@
 #maven ignore
 target/
 
+node_modules/
+
+*.json
+
 #idea
 .idea/
 /idea/
