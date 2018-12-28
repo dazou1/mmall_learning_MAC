@@ -8,6 +8,7 @@ import com.mmall.service.IUserService;
 import com.mmall.util.CookieUtil;
 import com.mmall.util.JsonUtil;
 import com.mmall.util.RedisPoolUtil;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,7 +48,7 @@ public class UserController {
     //返回的时候自动通过SpringMVC的Jackson插件,让返回值序列化为Jackson
     @ResponseBody
     //通过@RequestParam对简单类型参数进行绑定,如果不使用这个注解,要求request传入参数名称和Controller方法的形参一致,方可绑定成功
-    public ServiceResponse<User> login(String username, String password, HttpSession session, HttpServletResponse httpServletResponse, HttpServletRequest httpServletRequest) {
+    public ServiceResponse<User> login(String username, String password, HttpSession session, HttpServletResponse httpServletResponse) {
         //service--->mybatis--->dao
         ServiceResponse<User> response = iUserService.login(username, password);
         //登录成功后,在session中加入该用户
@@ -64,9 +65,14 @@ public class UserController {
    * */
     @RequestMapping(value = "logout.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServiceResponse<String> logout(HttpSession session) {
+    public ServiceResponse<String> logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         //删除session
-        session.removeAttribute(Const.CURRENT_USER);
+//        session.removeAttribute(Const.CURRENT_USER);
+
+        //从httpServletRequest中获取Token Cookie值
+        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
+        CookieUtil.delLoginToken(httpServletRequest, httpServletResponse);
+        RedisPoolUtil.del(loginToken);//在Redis中删除退出用户的Cookie
         return ServiceResponse.createBySuccess();
     }
 
@@ -89,8 +95,14 @@ public class UserController {
     //获取用户登录信息
     @RequestMapping(value = "get_user_info.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServiceResponse<User> getUserInfo(HttpSession session) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServiceResponse<User> getUserInfo(HttpServletRequest httpServletRequest) {
+//        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if (StringUtils.isEmpty(loginToken)) {
+            return ServiceResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
+        }
+        String userJsonStr = RedisPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user != null) {
             return ServiceResponse.createBySuccess(user);
         }
