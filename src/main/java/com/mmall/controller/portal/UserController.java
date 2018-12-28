@@ -49,7 +49,6 @@ public class UserController {
     //通过@RequestParam对简单类型参数进行绑定,如果不使用这个注解,要求request传入参数名称和Controller方法的形参一致,方可绑定成功
     public ServiceResponse<User> login(String username, String password, HttpSession session, HttpServletResponse httpServletResponse, HttpServletRequest httpServletRequest) {
         //service--->mybatis--->dao
-
         ServiceResponse<User> response = iUserService.login(username, password);
         //登录成功后,在session中加入该用户
         if (response.isSuccess()) {
