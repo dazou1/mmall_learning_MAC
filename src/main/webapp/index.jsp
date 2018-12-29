@@ -1,8 +1,8 @@
 <html>
 <body>
-<h2>Tomcat2!</h2>
-<h2>Tomcat2!</h2>
-<h2>Tomcat2!</h2>
+<h2>Tomcat1!</h2>
+<h2>Tomcat1!</h2>
+<h2>Tomcat1!</h2>
 <h2>Hello World!</h2>
 <h2>Dazou</h2>
 <%@page pageEncoding="UTF-8"%>
