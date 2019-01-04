@@ -53,6 +53,20 @@
         <property name="maxInMemorySize" value="4096" />
         <property name="defaultEncoding" value="UTF-8"></property>
     </bean>
-
+    
+    <mvc:interceptors>
+        <!-- bean定义在这里的话,就会所有的请求都拦截-->
+        <mvc:interceptor>
+            <!--manage/a.do  /manage/*-->
+            <!--manage/b.do  /manage/*-->
+            <!--manage/product/save.do  /manage/**-->
+            <!--manage/order/detail.do  /manage/**-->
+            <mvc:mapping path="/manage/**"/>
+            <!--解决拦截登录循环,也就是不拦截登录请求-->
+            <!--<mvc:exclude-mapping path="/manage/user/login.do" />-->
+            <!-- 使用自定义的拦截器拦截-->
+            <bean class="com.mmall.controller.common.interceptor.AuthorityInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
 
 </beans>
