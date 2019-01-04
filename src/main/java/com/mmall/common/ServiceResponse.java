@@ -1,10 +1,9 @@
 package com.mmall.common;
 
-import com.sun.org.apache.regexp.internal.RE;
+
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-import java.io.Reader;
 import java.io.Serializable;
 
 /**
