@@ -9,7 +9,6 @@
      http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
      http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <context:component-scan base-package="com.mmall" annotation-config="true"/>
 
     <bean id="propertyConfigurer"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -90,15 +89,15 @@
     </bean>
 
     <!-- 使用@Transactional进行声明式事务管理需要声明下面这行 -->
-    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
-    <!-- 事务管理器
-     对mybatis操作数据库事务控制,Spring使用jdbc事务控制类
-     -->
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <!-- 数据源, 对数据库进行操作都需要引用数据源才能进行数据库操作 -->
-        <property name="dataSource" ref="dataSource"/>
-        <property name="rollbackOnCommitFailure" value="true"/>
-    </bean>
+    <!--<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />-->
+    <!--&lt;!&ndash; 事务管理器-->
+     <!--对mybatis操作数据库事务控制,Spring使用jdbc事务控制类-->
+     <!--&ndash;&gt;-->
+    <!--<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">-->
+        <!--&lt;!&ndash; 数据源, 对数据库进行操作都需要引用数据源才能进行数据库操作 &ndash;&gt;-->
+        <!--<property name="dataSource" ref="dataSource"/>-->
+        <!--<property name="rollbackOnCommitFailure" value="true"/>-->
+    <!--</bean>-->
 
 
 </beans>

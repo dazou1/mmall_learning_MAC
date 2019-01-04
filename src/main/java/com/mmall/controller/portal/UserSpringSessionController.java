@@ -47,6 +47,10 @@ public class UserSpringSessionController {
     @RequestMapping(value = "login.do", method = RequestMethod.GET)
     @ResponseBody
     public ServiceResponse<User> login(String username, String password, HttpSession session, HttpServletResponse httpServletResponse) {
+        //测试全局异常
+//        int i =  0;
+//        int j = 555/i;
+
         ServiceResponse<User> response = iUserService.login(username, password);
         //登录成功后,在session中加入该用户
         if (response.isSuccess()) {

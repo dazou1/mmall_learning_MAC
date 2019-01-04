@@ -14,7 +14,10 @@
     这里制定扫描的包是com.mmall,并且打开注解
     -->
     <!-- 对标记@Controller类中标识有@ResultMapping， @ResultMapping标识映射的URL,-->
-    <context:component-scan base-package="com.mmall" annotation-config="true"/>
+    <!-- Spring MVC 只扫描Controller层,即只扫描annotation是Controller-->
+    <context:component-scan base-package="com.mmall.controller" annotation-config="true" use-default-filters="false" >
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+    </context:component-scan>
 
     <!-- 使用<mvc:annotation-driven>可以代替配置注解映射器和注解适配器的配置
      <mvc:annotation-driven>默认加载很多的参数绑定方法,
