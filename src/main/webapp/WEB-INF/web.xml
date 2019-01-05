@@ -67,17 +67,21 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <!--<servlet-mapping>-->
+        <!--<servlet-name>dispatcher</servlet-name>-->
+        <!--&lt;!&ndash;-->
+        <!--第一种:*do,访问以*.do结尾由DispatcherServlet进行解析-->
+        <!--第二种:/,所有访问地址都由DispatcherServlet进行解析，对于静态文件的解析需要配置不让DispatcherServlet进行解析-->
+                <!--使用此种方式可以实现RESTful风格的url-->
+        <!--第三种:/*,这样配置不对,使用这种配置,最终要转发到一个jsp页面时,仍然由DispatcherServlet进行解析jsp地址,不能根据jsp页面找到Handler,会报错-->
+        <!--&ndash;&gt;-->
+        <!--<url-pattern>*.do</url-pattern>-->
+    <!--</servlet-mapping>-->
 
-
+        <!--RESTFul改造-->
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
-        <!--
-        第一种:*do,访问以*.do结尾由DispatcherServlet进行解析
-        第二种:/,所有访问地址都由DispatcherServlet进行解析，对于静态文件的解析需要配置不让DispatcherServlet进行解析
-                使用此种方式可以实现RESTful风格的url
-        第三种:/*,这样配置不对,使用这种配置,最终要转发到一个jsp页面时,仍然由DispatcherServlet进行解析jsp地址,不能根据jsp页面找到Handler,会报错
-        -->
-        <url-pattern>*.do</url-pattern>
+        <url-pattern>/</url-pattern>
     </servlet-mapping>
 
 </web-app>
