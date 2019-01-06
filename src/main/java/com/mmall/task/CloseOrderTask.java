@@ -1,16 +1,19 @@
 package com.mmall.task;
 
 import com.mmall.common.Const;
+import com.mmall.common.RedissonManager;
 import com.mmall.service.IOrderService;
 import com.mmall.util.PropertiesUtil;
 import com.mmall.util.RedisShardedPoolUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.redisson.api.RLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: dazou
@@ -23,6 +26,9 @@ import javax.annotation.PreDestroy;
 public class CloseOrderTask {
     @Autowired
     private IOrderService iOrderService;
+
+    @Autowired
+    private RedissonManager redissonManager;
 
     //关闭Tomcat有两种方式，一种通过温柔的执行shutdown关闭，一种通过kill杀死进程关闭
     //通过温柔的执行shutdown关闭是，以下的方法会在关闭前执行，即可以释放锁，而对于通过kill杀死进程关闭时，以下方法不会执行，即不会释放锁
@@ -55,7 +61,7 @@ public class CloseOrderTask {
         log.info("关闭订单定时任务结束");
     }
 
-    @Scheduled(cron = "0 */1 * * * ?") //每一分钟更新一次
+//    @Scheduled(cron = "0 */1 * * * ?") //每一分钟更新一次
     public void closeOrderTaskV3() {
         log.info("关闭订单定时任务启动");
         long lockTimeout = Long.parseLong(PropertiesUtil.getProperty("lock.timeout", "5000"));
@@ -90,14 +96,39 @@ public class CloseOrderTask {
 
     private void closeOrder(String lockName) {
         //对锁设置有效期
-        RedisShardedPoolUtil.expire(lockName, 50);//有效期为50秒，防止死锁
+        RedisShardedPoolUtil.expire(lockName, 5);//有效期为5秒，防止死锁
         log.info("获取锁:{},ThreadName:{}",Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK, Thread.currentThread().getName());
         //执行业务
         int hour = Integer.parseInt(PropertiesUtil.getProperty("close.order.task.time.hour", "2"));
-        iOrderService.closeOrder(hour);
+//        iOrderService.closeOrder(hour);
         //执行完业务后，释放锁
         RedisShardedPoolUtil.del(Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK);
         log.info("释放锁:{},ThreadName:{}",Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK, Thread.currentThread().getName());
         log.info("=================================");
+    }
+
+
+    //使用Redisson实现Redis分布式锁
+    @Scheduled(cron = "0 */1 * * * ?") //每一分钟更新一次
+    public void closeOrderTaskV4() {
+        RLock lock = redissonManager.getRedisson().getLock(Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK);
+        boolean getLock = false;
+        try {
+            if (getLock = lock.tryLock(2, 5, TimeUnit.SECONDS)) {
+                log.info("Reisson获取到分布式锁:{},ThreadName:{}",Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK, Thread.currentThread().getName());
+                int hour = Integer.parseInt(PropertiesUtil.getProperty("close.order.task.time.hour", "2"));
+//                iOrderService.closeOrder(hour);
+            } else {
+                log.info("Reisson没有获取到分布式锁:{},ThreadName:{}",Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK, Thread.currentThread().getName());
+            }
+        } catch (InterruptedException e) {
+            log.error("Redisson获取分布式锁异常",e);
+        } finally {
+            if (!getLock) {
+                return;
+            }
+            lock.unlock();
+            log.info("Redisson释放分布式锁");
+        }
     }
 }
